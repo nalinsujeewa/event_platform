@@ -19,7 +19,10 @@ const Footer = () => {
             width={128}
           />
         </Link>
-        <p>{new Date().getFullYear()} Evently . All Rights reserved</p>
+        <p>
+          {new Date().getFullYear()} Evently . All Rights reserved by SASH Web
+          Dev
+        </p>
       </div>
     </footer>
   );
