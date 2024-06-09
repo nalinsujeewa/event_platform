@@ -7,8 +7,10 @@ import User from "../database/models/user.model"
 import Event from "../database/models/event.model"
 import Category from "../database/models/category.model"
 import { revalidatePath } from "next/cache"
-import { date } from "zod"
 
+const getCategoryByName = async (name: string) => {
+    return Category.findOne({ name: { $regex: name, $options: 'i'}})
+}
 const populateEvent = async (query: any) => {
     return query
         .populate({ 
@@ -94,7 +96,12 @@ export const getAllEvents = async ({
     try{
        await connectToDatabase()
         
-       const conditions = {}
+       const titleCondition = query ? { title: { $regex: query, $options: 'i'}} : {}
+       const categoryCondition = category ? await getCategoryByName(category): null
+       
+       const conditions = {
+        $and: [ titleCondition, categoryCondition ? { category: categoryCondition._id } : {}],
+       }
        const eventsQuery = Event.find(conditions)
             .sort({ createdAt: 'desc'})
             .skip(0)
